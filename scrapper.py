@@ -28,8 +28,17 @@ for good in GOODS:
     for key in good:
         URL = good[key]
         market_page = requests.get(URL)
+        i = 1
+        while market_page.headers.get('Content-Length'):
+            sleep(60 * i)
+            i += 1
+            market_page = requests.get(URL)
+
         soup = BeautifulSoup(market_page.content, "html.parser")
-        span_element = soup.find("div", class_="KnVez").find(class_="_3NaXx _3kWlK")
-        result = span_element.next_element.next_element.getText().replace(" ", "")
-        print(key + " " + result)
-        sleep(600)
+        no_price_element = soup.find("div", class_="_1Kcza")
+        if not no_price_element:
+            span_element = soup.find("div", class_="KnVez").find(class_="_3NaXx _3kWlK")
+            result = span_element.next_element.next_element.getText().replace(" ", "")
+            print(key + " " + result)
+        else:
+            print(key + " " + "0")
