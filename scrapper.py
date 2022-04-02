@@ -26,6 +26,7 @@ GOOGLE_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 GOOGLE_DOC_ID = os.environ.get('GOOGLE_DOC_ID')
 GOOGLE_TOKEN = json.loads(os.environ.get('GOOGLE_TOKEN'))
 CBR_RATE_URL = "https://www.cbr.ru/currency_base/daily/"
+proxies = json.loads(os.environ.get('PROXY_LIST'))
 
 
 def update_sheet(current_date, cbr_rate_value, price_values):
@@ -56,12 +57,14 @@ def get_prices():
         for key in good:
             url = good[key]
             market_page = requests.get(url)
-            i = 1
+            i = 0
             while market_page.headers.get('Content-Length'):
-                sleep(60 * i)
+                sleep(10)
+                if i == len(proxies):
+                    i = 0
+                    sleep(600)
+                market_page = requests.get(url, proxies=proxies[i])
                 i += 1
-                market_page = requests.get(url)
-
             soup = BeautifulSoup(market_page.content, "html.parser")
             no_price_element = soup.find("div", class_="_1Kcza")
             if not no_price_element:
@@ -70,7 +73,7 @@ def get_prices():
                 result_array += [price]
             else:
                 result_array += [0]
-        return result_array
+    return result_array
 
 
 def get_cbr_rate():
