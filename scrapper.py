@@ -1,7 +1,13 @@
+import os
+import string
+
 import requests
+import json
 from bs4 import BeautifulSoup
 from time import sleep
 from datetime import date
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 
 GOODS = [
     {"Холодильник LG GA-B459MQSL, белый": "https://market.yandex.ru/product--kholodilnik-lg-doorcooling-ga-b459m-sl/649939034?nid=71639&show-uid=16487062223606251975406023&context=search&sku=101631926730"},
@@ -15,30 +21,66 @@ GOODS = [
 ]
 
 USD_CODE = "840"
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+GOOGLE_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+GOOGLE_DOC_ID = os.environ.get('GOOGLE_DOC_ID')
+GOOGLE_TOKEN = json.loads(os.environ.get('GOOGLE_TOKEN'))
+CBR_RATE_URL = "https://www.cbr.ru/currency_base/daily/"
 
-usd_page = requests.get("https://www.cbr.ru/currency_base/daily/")
-soup = BeautifulSoup(usd_page.content, "html.parser")
-usd_price_in_rub = soup.find("td", text=USD_CODE).find_next_sibling("td").find_next_sibling("td").find_next_sibling("td").find_next_sibling("td").getText()
 
-date = date.today().strftime("%d.%m.%Y")
-print(date)
-print(usd_price_in_rub)
-
-for good in GOODS:
-    for key in good:
-        URL = good[key]
-        market_page = requests.get(URL)
-        i = 1
-        while market_page.headers.get('Content-Length'):
-            sleep(60 * i)
-            i += 1
-            market_page = requests.get(URL)
-
-        soup = BeautifulSoup(market_page.content, "html.parser")
-        no_price_element = soup.find("div", class_="_1Kcza")
-        if not no_price_element:
-            span_element = soup.find("div", class_="KnVez").find(class_="_3NaXx _3kWlK")
-            result = span_element.next_element.next_element.getText().replace(" ", "")
-            print(key + " " + result)
+def update_sheet(current_date, cbr_rate_value, price_values):
+    creds = Credentials.from_authorized_user_info(GOOGLE_TOKEN, GOOGLE_SCOPES)
+    service = build('sheets', 'v4', credentials=creds)
+    sheet = service.spreadsheets()
+    new_row = [current_date] + price_values + [cbr_rate_value]
+    new_row_end_letter = string.ascii_uppercase[len(new_row) - 1]
+    new_row_index = 1
+    while True:
+        current_row = sheet.values().get(spreadsheetId=GOOGLE_DOC_ID,
+                                         range="A" + str(new_row_index) + ":" + new_row_end_letter + str(new_row_index)).execute()
+        values = current_row.get('values', [])
+        if not values:
+            break
         else:
-            print(key + " " + "0")
+            new_row_index += 1
+
+    sheet.values().update(spreadsheetId=GOOGLE_DOC_ID,
+                                   range="A"+str(new_row_index) + ":" + new_row_end_letter + str(new_row_index),
+                                   valueInputOption='RAW',
+                                   body={"values": [new_row]}).execute()
+
+
+def get_prices():
+    for good in GOODS:
+        result_array = []
+        for key in good:
+            url = good[key]
+            market_page = requests.get(url)
+            i = 1
+            while market_page.headers.get('Content-Length'):
+                sleep(60 * i)
+                i += 1
+                market_page = requests.get(url)
+
+            soup = BeautifulSoup(market_page.content, "html.parser")
+            no_price_element = soup.find("div", class_="_1Kcza")
+            if not no_price_element:
+                span_element = soup.find("div", class_="KnVez").find(class_="_3NaXx _3kWlK")
+                price = span_element.next_element.next_element.getText().replace(" ", "")
+                result_array += [price]
+            else:
+                result_array += [0]
+        return result_array
+
+
+def get_cbr_rate():
+    usd_page = requests.get(CBR_RATE_URL)
+    soup = BeautifulSoup(usd_page.content, "html.parser")
+    usd_price_in_rub = soup.find("td", text=USD_CODE).find_next_sibling("td").find_next_sibling("td").find_next_sibling("td").find_next_sibling("td").getText()
+    return usd_price_in_rub
+
+
+cbr_rate = get_cbr_rate()
+prices = get_prices()
+today_str = date.today().strftime("%d.%m.%Y")
+update_sheet(today_str, cbr_rate, prices)
