@@ -33,5 +33,7 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run scrapper
-      run: |
-        python scrapper.py
+        GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        GOOGLE_DOC_ID: ${{ secrets.GOOGLE_DOC_ID }}
+        PROXY_LIST: ${{ secrets.PROXY_LIST }}
+      run: python scrapper.py
