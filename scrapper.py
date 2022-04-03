@@ -21,7 +21,6 @@ GOODS = [
 ]
 
 USD_CODE = "840"
-GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 GOOGLE_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 GOOGLE_DOC_ID = os.environ.get('GOOGLE_DOC_ID')
 GOOGLE_TOKEN = json.loads(os.environ.get('GOOGLE_TOKEN'))
