@@ -36,7 +36,4 @@ jobs:
           GOOGLE_DOC_ID: ${{ secrets.GOOGLE_DOC_ID }}
           PROXY_LIST: ${{ secrets.PROXY_LIST }}
         run: |
-          echo "$GOOGLE_TOKEN"
-          echo "$GOOGLE_DOC_ID"
-          echo "$PROXY_LIST"
           python scrapper.py
