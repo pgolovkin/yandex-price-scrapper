@@ -1,3 +1,4 @@
+import base64
 import os
 import string
 
@@ -23,9 +24,9 @@ GOODS = [
 USD_CODE = "840"
 GOOGLE_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 GOOGLE_DOC_ID = os.environ['GOOGLE_DOC_ID']
-GOOGLE_TOKEN = json.loads(os.environ['GOOGLE_TOKEN'])
+GOOGLE_TOKEN = json.loads(base64.b64decode(os.environ['GOOGLE_TOKEN']))
 CBR_RATE_URL = "https://www.cbr.ru/currency_base/daily/"
-proxies = json.loads(os.environ['PROXY_LIST'])
+proxies = json.loads(base64.b64decode(os.environ['PROXY_LIST']))
 
 
 def update_sheet(current_date, cbr_rate_value, price_values):

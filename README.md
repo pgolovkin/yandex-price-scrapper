@@ -16,3 +16,14 @@ print(creds.to_json())
 ```
 
 where `secret.json` is a json file that you can download from the Google console. 
+
+## Environment variables
+`GOOGLE_TOKEN` - encoded in base 64 google access token for accesing the sheet
+`GOOGLE_DOC_ID` - the id of the Google sheet
+`PROXY_LIST` - encoded in base 64 list of proxies (json array). The example is
+```json
+[
+  {"http": "10.10.10.10:8080"},
+  {"https": "10.10.10.10:443"}
+]
+```
