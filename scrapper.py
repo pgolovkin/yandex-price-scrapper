@@ -22,10 +22,10 @@ GOODS = [
 
 USD_CODE = "840"
 GOOGLE_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-GOOGLE_DOC_ID = os.environ.get('GOOGLE_DOC_ID')
-GOOGLE_TOKEN = json.loads(os.environ.get('GOOGLE_TOKEN'))
+GOOGLE_DOC_ID = os.getenv('GOOGLE_DOC_ID')
+GOOGLE_TOKEN = json.loads(os.getenv('GOOGLE_TOKEN'))
 CBR_RATE_URL = "https://www.cbr.ru/currency_base/daily/"
-proxies = json.loads(os.environ.get('PROXY_LIST'))
+proxies = json.loads(os.getenv('PROXY_LIST'))
 
 
 def update_sheet(current_date, cbr_rate_value, price_values):
