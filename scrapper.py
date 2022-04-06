@@ -9,7 +9,6 @@ from time import sleep
 from datetime import date
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
-from requests.exceptions import ProxyError
 
 GOODS = [
     {"Холодильник LG GA-B459MQSL, белый": "https://market.yandex.ru/product--kholodilnik-lg-doorcooling-ga-b459m-sl/649939034?nid=71639&show-uid=16487062223606251975406023&context=search&sku=101631926730"},
@@ -27,7 +26,6 @@ GOOGLE_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 GOOGLE_DOC_ID = os.environ['GOOGLE_DOC_ID']
 GOOGLE_TOKEN = json.loads(base64.b64decode(os.environ['GOOGLE_TOKEN']))
 CBR_RATE_URL = "https://www.cbr.ru/currency_base/daily/"
-proxies = json.loads(base64.b64decode(os.environ['PROXY_LIST']))
 
 
 def update_sheet(current_date, cbr_rate_value, price_values):
@@ -58,17 +56,12 @@ def get_prices():
         for key in good:
             url = good[key]
             market_page = requests.get(url)
-            i = 0
+            i = 1
             while market_page.headers.get('Content-Length'):
-                sleep(10)
-                if i == len(proxies):
-                    i = 0
-                    sleep(600)
-                    try:
-                        market_page = requests.get(url, proxies=proxies[i])
-                    except ProxyError:
-                        i += 1
-                        continue
+                sleep(60 * i)
+                i += 1
+                market_page = requests.get(url)
+
             soup = BeautifulSoup(market_page.content, "html.parser")
             no_price_element = soup.find("div", class_="_1Kcza")
             if not no_price_element:
