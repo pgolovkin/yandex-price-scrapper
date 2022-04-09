@@ -51,8 +51,8 @@ def update_sheet(current_date, cbr_rate_value, price_values):
 
 
 def get_prices():
+    result_array = []
     for good in GOODS:
-        result_array = []
         for key in good:
             url = good[key]
             market_page = requests.get(url)
