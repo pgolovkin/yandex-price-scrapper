@@ -46,7 +46,7 @@ def update_sheet(current_date, cbr_rate_value, price_values):
 
     sheet.values().update(spreadsheetId=GOOGLE_DOC_ID,
                                    range="A"+str(new_row_index) + ":" + new_row_end_letter + str(new_row_index),
-                                   valueInputOption='RAW',
+                                   valueInputOption='USER_ENTERED',
                                    body={"values": [new_row]}).execute()
 
 
