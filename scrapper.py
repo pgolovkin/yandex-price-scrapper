@@ -19,7 +19,7 @@ GOODS = [
     {"Холодильник LG GA-B459MEQM, бежевый": "https://market.yandex.ru/product--kholodilnik-lg-ga-b459meqm/871698040?nid=71639&show-uid=16487062223606251975406005&context=search&sku=871698040"},
     {"Ноутбук APPLE MacBook Pro 14 (2021) Space Grey MKGP3RU/A (Apple M1 Pro with 8-core CPU": "https://market.yandex.ru/product--14-2-noutbuk-apple-macbook-pro-14-late-2021-3024-1964-apple-m1-pro-ram-16-gb-ssd-512-gb-apple-graphics-14-core/1447472428?nid=26895412&show-uid=16487062223606251975406001&context=search&sku=101459417737"},
     {"Квадрокоптер DJI Mini SE Fly More Combo, белый": "https://market.yandex.ru/product--kvadrokopter-dji-mini-se-fly-more-combo/1483484419?cpa=1&sku=101507521741&offerid=lrp8ba30D2RVcM97VAiAlQ"},
-    {"Электрический стабилизатор для смартфона DJI Osmo Mobile 4", "https://market.yandex.ru/product--elektricheskii-stabilizator-dlia-smartfona-dji-osmo-mobile-4/821146023?cpa=1&sku=821146023&nid=26995670"}
+    {"Электрический стабилизатор для смартфона DJI Osmo Mobile 4": "https://market.yandex.ru/product--elektricheskii-stabilizator-dlia-smartfona-dji-osmo-mobile-4/821146023?cpa=1&sku=821146023&nid=26995670"}
 ]
 
 USD_CODE = "840"
