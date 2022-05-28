@@ -83,7 +83,7 @@ def get_cbr_rate():
     usd_page = requests.get(CBR_RATE_URL)
     soup = BeautifulSoup(usd_page.content, "html.parser")
     usd_price_in_rub = soup.find("td", text=USD_CODE).find_next_sibling("td").find_next_sibling("td").find_next_sibling("td").find_next_sibling("td").getText()
-    return usd_price_in_rub
+    return usd_price_in_rub.replace(",", ".")
 
 
 cbr_rate = get_cbr_rate()
